@@ -51,12 +51,9 @@ Tables.columnnames(::Rule) = (:lhs, :rhs)
 Base.getindex(r::Rule, s::Symbol) = getfield(r, s)
 
 function Base.show(io::IO, ::MIME"text/plain", rws::AbstractRewritingSystem)
-    hl_odd = PrettyTables.Highlighter(
-        f = (rule, i, j) -> i % 2 == 0,
-        crayon = PrettyTables.Crayon(;
-            foreground = :dark_gray,
-            negative = true,
-        ),
+    hl_odd = PrettyTables.TextHighlighter(
+        (rule, i, j) -> i % 2 == 0,
+        PrettyTables.Crayon(; foreground = :dark_gray, negative = true),
     )
     if isreduced(rws)
         print(io, "reduced")
@@ -77,19 +74,18 @@ function Base.show(io::IO, ::MIME"text/plain", rws::AbstractRewritingSystem)
     return PrettyTables.pretty_table(
         io,
         rws,
-        show_row_number = true,
-        row_number_column_title = "Rule",
-        formatters = (w, args...) -> sprint(print_repr, w, alphabet(rws)),
-        autowrap = true,
-        linebreaks = true,
-        reserved_display_lines = 3[],
-        columns_width = displaysize(io)[2] ÷ 2 - 8,
-        # vcrop_mode = :middle,
-        # equal_columns_width = true,
-        # crop = :vertical,
-        ellipsis_line_skip = 1,
+        show_row_number_column = true,
+        row_number_column_label = "Rule",
+        formatters = [(w, args...) -> sprint(print_repr, w, alphabet(rws))],
+        auto_wrap = true,
+        line_breaks = true,
+        reserved_display_lines = 3,
+        fixed_data_column_widths = displaysize(io)[2] ÷ 2 - 8,
+        # vertical_crop_mode = :middle,
+        # equal_data_column_widths = true,
+        # fit_table_in_display_vertically = false,
         alignment = [:r, :l],
-        highlighters = hl_odd,
+        highlighters = [hl_odd],
     )
 end
 

@@ -90,5 +90,6 @@
         @test KB.rewrite(b * B, Z) == b * B
 
         @test sprint(show, R) isa String
+        @test sprint(show, MIME"text/plain"(), R) isa String
     end
 end
